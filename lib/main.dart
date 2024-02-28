@@ -31,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   bool _isBadValue = false;
   Color _backgroundColor = Colors.white;
+  MainAxisAlignment _contentPosition = MainAxisAlignment.center;
 
   void _changeCount() {
     setState(() {
@@ -38,11 +39,24 @@ class _MyHomePageState extends State<MyHomePage> {
       _backgroundColor = Colors.white;
       _isBadValue = false;
       if (magicValue == null) {
-        if (_magicController.text == 'Avada Kedavra') {
-          _counter = 0;
-        } else {
-          _backgroundColor = Colors.redAccent;
-          _isBadValue = true;
+        switch (_magicController.text) {
+          case 'Avada Kedavra': {
+              _counter = 0;
+              break;
+          }
+          case 'Wingardium leviosa': {
+              _contentPosition = MainAxisAlignment.start;
+              break;
+          }
+          case 'Accio default view': {
+              _contentPosition = MainAxisAlignment.center;
+              break;
+          }
+          default: {
+              _backgroundColor = Colors.redAccent;
+              _isBadValue = true;
+              break;
+          }
         }
       } else {
         _counter += magicValue;
@@ -63,10 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: _backgroundColor,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          mainAxisAlignment: _contentPosition,
+          children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
               child: TextField(
                 controller: _magicController,
                 decoration: const InputDecoration(
