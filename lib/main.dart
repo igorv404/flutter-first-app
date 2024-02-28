@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _magicController = TextEditingController();
   int _counter = 0;
   bool _isBadValue = false;
-  var _backgroundColor = Colors.white;
+  Color _backgroundColor = Colors.white;
 
   void _changeCount() {
     setState(() {
