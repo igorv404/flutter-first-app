@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_project/components/establishmentItem.dart';
 import 'package:my_project/models/establishment.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   final List<Establishment> _list = [
     Establishment(
       1,
@@ -53,6 +46,8 @@ class _HomePageState extends State<HomePage> {
       4,
     ),
   ];
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

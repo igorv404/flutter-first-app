@@ -1,15 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
-
-  @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
-}
-
-class _RegistrationPageState extends State<RegistrationPage> {
+class RegistrationPage extends StatelessWidget {
   final GlobalKey<FormState> _registrationFormKey = GlobalKey<FormState>();
+
+  RegistrationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
