@@ -25,7 +25,7 @@ class EstablishmentItem extends StatelessWidget {
             height: 80,
             fit: BoxFit.cover,
           ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+          SizedBox(width: MediaQuery.sizeOf(context).width * 0.05),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

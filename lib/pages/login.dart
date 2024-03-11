@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
             Form(
               key: _loginFormKey,
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.sizeOf(context).width * 0.9,
                 child: Column(
                   children: [
                     const SizedBox(height: 10),

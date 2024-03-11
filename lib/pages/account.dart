@@ -17,10 +17,10 @@ class AccountPage extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: Colors.blue,
-              radius: MediaQuery.of(context).size.width * 0.1,
+              radius: MediaQuery.sizeOf(context).width * 0.1,
               child: Icon(
                 Icons.person,
-                size: MediaQuery.of(context).size.width * 0.1,
+                size: MediaQuery.sizeOf(context).width * 0.1,
                 color: Colors.white,
               ),
             ),

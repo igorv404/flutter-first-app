@@ -21,7 +21,7 @@ class RegistrationPage extends StatelessWidget {
             Form(
               key: _registrationFormKey,
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.sizeOf(context).width * 0.9,
                 child: Column(
                   children: [
                     TextFormField(
