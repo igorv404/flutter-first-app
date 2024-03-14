@@ -1,10 +1,23 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:my_project/models/login_info.dart';
+import 'package:my_project/pages/home.dart';
+import 'package:my_project/utils/secure_storage.dart';
+import 'package:my_project/utils/validation.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
-
-  LoginPage({super.key});
+  final Validation _validation = Validation();
+  final SecureStorage _secureStorage = SecureStorage();
+  final LoginInfo _loginInfo = LoginInfo();
+  bool _isLoginSuccess = true;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +42,10 @@ class LoginPage extends StatelessWidget {
                         labelText: 'Enter your email',
                         border: OutlineInputBorder(),
                       ),
+                      validator: (email) => _validation.validateEmail(email!),
+                      onSaved: (value) {
+                        _loginInfo.email = value;
+                      },
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
@@ -37,15 +54,41 @@ class LoginPage extends StatelessWidget {
                         labelText: 'Enter your password',
                         border: OutlineInputBorder(),
                       ),
+                      validator: (password) =>
+                          _validation.validatePassword(password!),
+                      onSaved: (value) {
+                        _loginInfo.password = value;
+                      },
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/');
+                        if (_loginFormKey.currentState!.validate()) {
+                          _loginFormKey.currentState!.save();
+                          _secureStorage.checkUser(_loginInfo).then(
+                                (value) => {
+                                  setState(() {
+                                    _isLoginSuccess = value;
+                                  }),
+                                  if (_isLoginSuccess)
+                                    {
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HomePage(),
+                                        ),
+                                        (route) => false,
+                                      ),
+                                    },
+                                },
+                              );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 10,
+                        ),
                       ),
                       child: const Text('Login'),
                     ),
@@ -54,6 +97,18 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
+            Visibility(
+              visible: _isLoginSuccess == false,
+              child: const Column(
+                children: [
+                  Text(
+                    'Bad data',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  SizedBox(height: 15),
+                ],
+              ),
+            ),
             RichText(
               text: TextSpan(
                 text: 'Don\'t have an account? ',
@@ -63,7 +118,10 @@ class LoginPage extends StatelessWidget {
                     text: 'Register',
                     style: const TextStyle(color: Colors.blue),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => Navigator.pushReplacementNamed(context, '/registration'),
+                      ..onTap = () => Navigator.pushReplacementNamed(
+                            context,
+                            '/registration',
+                          ),
                   ),
                 ],
               ),
