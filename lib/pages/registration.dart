@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/models/user.dart';
 import 'package:my_project/pages/home.dart';
-import 'package:my_project/utils/secure_storage.dart';
+import 'package:my_project/repositories/user_repository.dart';
 
 import 'package:my_project/utils/validation.dart';
 
@@ -10,7 +10,7 @@ class RegistrationPage extends StatelessWidget {
   final GlobalKey<FormState> _registrationFormKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   final Validation _validation = Validation();
-  final SecureStorage _secureStorage = SecureStorage();
+  final UserRepository _userRepository = UserRepository();
   final User _user = User(1);
 
   RegistrationPage({super.key});
@@ -101,7 +101,7 @@ class RegistrationPage extends StatelessWidget {
                       onPressed: () {
                         if (_registrationFormKey.currentState!.validate()) {
                           _registrationFormKey.currentState!.save();
-                          _secureStorage.saveUser(_user);
+                          _userRepository.saveInStorage(_user);
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

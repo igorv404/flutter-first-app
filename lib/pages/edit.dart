@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_project/models/user.dart';
 import 'package:my_project/pages/account.dart';
 import 'package:my_project/pages/registration.dart';
-import 'package:my_project/utils/secure_storage.dart';
+import 'package:my_project/repositories/user_repository.dart';
 import 'package:my_project/utils/validation.dart';
 
 class EditPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class EditPage extends StatefulWidget {
 
 class _EditPageState extends State<EditPage> {
   final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
-  final SecureStorage _secureStorage = SecureStorage();
+  final UserRepository _userRepository = UserRepository();
   final Validation _validation = Validation();
   late Future<User?> _user;
   final User _newUser = User(1);
@@ -22,7 +22,7 @@ class _EditPageState extends State<EditPage> {
   @override
   void initState() {
     super.initState();
-    _user = _secureStorage.getUser();
+    _user = _userRepository.getData();
   }
 
   @override
@@ -104,7 +104,7 @@ class _EditPageState extends State<EditPage> {
                               _newUser.id = snapshot.data!.id;
                               _newUser.countOfReservations =
                                   snapshot.data!.countOfReservations;
-                              _secureStorage.saveUser(_newUser);
+                              _userRepository.saveInStorage(_newUser);
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -112,7 +112,6 @@ class _EditPageState extends State<EditPage> {
                                 ),
                                 (route) => false,
                               );
-                              // Navigator.pushAndRemoveUntil(context, '/account');
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -126,7 +125,7 @@ class _EditPageState extends State<EditPage> {
                         const SizedBox(height: 15),
                         ElevatedButton(
                           onPressed: () {
-                            _secureStorage.deleteUser();
+                            _userRepository.deleteData();
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(

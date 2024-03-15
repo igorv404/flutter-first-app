@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_project/models/user.dart';
 import 'package:my_project/pages/login.dart';
-import 'package:my_project/utils/secure_storage.dart';
+import 'package:my_project/repositories/user_repository.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -11,13 +11,13 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final SecureStorage _secureStorage = SecureStorage();
+  final UserRepository _userRepository = UserRepository();
   late Future<User?> _user;
 
   @override
   void initState() {
     super.initState();
-    _user = _secureStorage.getUser();
+    _user = _userRepository.getData();
   }
 
   @override

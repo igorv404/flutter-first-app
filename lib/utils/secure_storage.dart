@@ -1,43 +1,21 @@
-import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:my_project/models/login_info.dart';
-
-import 'package:my_project/models/user.dart';
 
 class SecureStorage {
   final FlutterSecureStorage _flutterSecureStorage =
       const FlutterSecureStorage();
 
-  void saveUser(User user) {
+  void saveInStorage(String key, String data) {
     _flutterSecureStorage.write(
-      key: 'user',
-      value: jsonEncode(user.toJson()),
+      key: key,
+      value: data,
     );
   }
 
-  Future<User?> getUser() async {
-    final String? user = await _flutterSecureStorage.read(key: 'user');
-    if (user != null) {
-      final Map<String, dynamic> decodedJsonUser =
-        json.decode(user) as Map<String, dynamic>;
-      return User.fromJson(decodedJsonUser);
-    } else {
-      return null;
-    }
+  Future<String?> getData(String key) async {
+    return await _flutterSecureStorage.read(key: key);
   }
 
-  Future<bool> checkUser(LoginInfo loginInfo) async {
-    final User? registerUser = await getUser();
-    if (registerUser != null) {
-      return loginInfo.email == registerUser.email &&
-          loginInfo.password == registerUser.password;
-    } else {
-      return false;
-    }
-  }
-
-  void deleteUser() {
-    _flutterSecureStorage.delete(key: 'user');
+  void deleteData(String key) {
+    _flutterSecureStorage.delete(key: key);
   }
 }

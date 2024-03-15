@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/models/login_info.dart';
 import 'package:my_project/pages/home.dart';
-import 'package:my_project/utils/secure_storage.dart';
+import 'package:my_project/repositories/user_repository.dart';
 import 'package:my_project/utils/validation.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final Validation _validation = Validation();
-  final SecureStorage _secureStorage = SecureStorage();
+  final UserRepository _userRepository = UserRepository();
   final LoginInfo _loginInfo = LoginInfo();
   bool _isLoginSuccess = true;
 
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         if (_loginFormKey.currentState!.validate()) {
                           _loginFormKey.currentState!.save();
-                          _secureStorage.checkUser(_loginInfo).then(
+                          _userRepository.checkData(_loginInfo).then(
                                 (value) => {
                                   setState(() {
                                     _isLoginSuccess = value;
