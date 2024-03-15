@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_project/pages/account.dart';
+import 'package:my_project/pages/edit.dart';
 import 'package:my_project/pages/home.dart';
 import 'package:my_project/pages/login.dart';
 import 'package:my_project/pages/registration.dart';
@@ -16,14 +17,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
       ),
       initialRoute: '/registration',
       routes: {
         '/': (context) => HomePage(),
         '/registration': (context) => RegistrationPage(),
-        '/login': (context) => LoginPage(),
+        '/login': (context) => const LoginPage(),
         '/account': (context) => const AccountPage(),
+        '/edit': (context) => const EditPage(),
       },
     );
   }
