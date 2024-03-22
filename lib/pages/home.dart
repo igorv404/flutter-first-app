@@ -1,8 +1,18 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/components/establishmentItem.dart';
 import 'package:my_project/models/establishment.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final List<Establishment> _list = [
     Establishment(
       1,
@@ -38,7 +48,8 @@ class HomePage extends StatelessWidget {
       'https://ua.igotoworld.com/frontend/webcontent/websites/1/images/1930064_800x600_red_pepper_2.jpg',
       '5 Sichovyh Striltsiv street, Lviv',
       4,
-    ),Establishment(
+    ),
+    Establishment(
       6,
       'Grand Cafe Leopolis',
       'https://reston.ua/uploads/img/zavedeniya/f1cef54.jpg',
@@ -46,8 +57,35 @@ class HomePage extends StatelessWidget {
       4,
     ),
   ];
+  late bool _connectionStatus;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
-  HomePage({super.key});
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+    result = await _connectivity.checkConnectivity();
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result[0] != ConnectivityResult.none;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +110,26 @@ class HomePage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 15),
-              const Text('All establishments',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              const Text(
+                'All establishments',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
-              for (Establishment establishment in _list)
-                EstablishmentItem(establishment: establishment),
+              if (_connectionStatus)
+                Column(
+                  children: [
+                    for (Establishment establishment in _list)
+                      EstablishmentItem(establishment: establishment),
+                  ],
+                )
+              else
+                const Text(
+                  'No content',
+                  style: TextStyle(
+                    fontSize: 26,
+                    color: Colors.red,
+                  ),
+                ),
             ],
           ),
         ),

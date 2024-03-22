@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:my_project/components/modal_item.dart';
 import 'package:my_project/models/login_info.dart';
 import 'package:my_project/pages/home.dart';
 import 'package:my_project/repositories/user_repository.dart';
@@ -18,6 +22,37 @@ class _LoginPageState extends State<LoginPage> {
   final UserRepository _userRepository = UserRepository();
   final LoginInfo _loginInfo = LoginInfo();
   bool _isLoginSuccess = true;
+  bool _isCheckboxChecked = false;
+  final ModalItem _modalItem = ModalItem();
+  late bool _connectionStatus;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+    result = await _connectivity.checkConnectivity();
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result[0] != ConnectivityResult.none;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +96,20 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _isCheckboxChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckboxChecked = value!;
+                            });
+                          },
+                        ),
+                        const Text('Remember Me'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
                         if (_loginFormKey.currentState!.validate()) {
@@ -72,16 +121,54 @@ class _LoginPageState extends State<LoginPage> {
                                   }),
                                   if (_isLoginSuccess)
                                     {
-                                      Navigator.pushAndRemoveUntil(
+                                      if (_connectionStatus)
+                                        {
+                                          _userRepository.getData().then(
+                                                (value) => {
+                                                  if (value != null)
+                                                    {
+                                                      value.isRemembered =
+                                                          _isCheckboxChecked,
+                                                      _userRepository
+                                                          .saveInStorage(value),
+                                                    },
+                                                },
+                                              ),
+                                          _modalItem.showModalMessage(
+                                            context,
+                                            'Success!',
+                                          ),
+                                          Future.delayed(
+                                              const Duration(seconds: 3), () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage(),
+                                              ),
+                                              (route) => false,
+                                            );
+                                          }),
+                                        }
+                                      else
+                                        {
+                                          _modalItem.showModalMessage(
+                                            context,
+                                            'No Internet!',
+                                          ),
+                                        },
+                                    }
+                                  else
+                                    {
+                                      _modalItem.showModalMessage(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) => HomePage(),
-                                        ),
-                                        (route) => false,
+                                        'User not found!',
                                       ),
                                     },
                                 },
                               );
+                        } else {
+                          _modalItem.showModalMessage(context, 'Failed!');
                         }
                       },
                       style: ElevatedButton.styleFrom(
